@@ -1,0 +1,10 @@
+.contenedor{
+    display: flex;
+    justify-content: space-between;
+}
+
+.navegacion{
+    display: flex;
+    gap: 10;
+    align-items: flex-end;
+}

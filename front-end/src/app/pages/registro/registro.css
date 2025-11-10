@@ -1,0 +1,38 @@
+/* Contenedor de cada campo */
+*{
+    background-color: rgb(199, 205, 205);
+}
+
+/* Estilo para los labels */
+.mb-1 label {
+  display: inline-block;
+  width: 230px; /* ajusta el ancho según el largo de los textos */
+  font-weight: bold;
+}
+
+/* Estilo para los inputs */
+.mb-1 input {
+  padding: 0.4rem;
+  margin-left: 10rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 550px;
+}
+
+.form-control {
+  flex: 1; /* toma el resto del espacio */
+  padding: 12px;
+  font-size: 16px;
+  border: 3px solid #44f252;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+/* Estilo de mensajes de error */
+.error {
+  color: red;
+  font-size: 0.8rem;
+  display: block;
+  margin-left: 400px; /* Alinea con los inputs */
+  padding-top: 0.2rem;
+}

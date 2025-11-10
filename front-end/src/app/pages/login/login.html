@@ -1,0 +1,23 @@
+<div class="container">
+
+  <div class="form-container">
+    <form class="card" [formGroup]="formulario" (ngSubmit)="iniciarSesion()">
+      <div class="card-body">
+        <div class="form-group">
+          <label for="correo" class="form-label">Email</label>
+          <input type="email" id="correo" name="correo" class="form-control" formControlName="correo" placeholder="Ingrese correo" aria-describedby="emailHelp"/>
+        </div>
+        <div class="form-group">
+          <label for="contrasenia" class="form-label">Contraseña</label>
+          <input type="password" id="contrasenia" name="contrasenia" class="form-control" formControlName="contrasenia" placeholder="Ingrese contraseña"/>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-success me-2" [disabled]="!formulario.valid">Iniciar Sesión</button>
+        </div>
+        
+      </div>
+    </form>
+  </div>
+</div>
+

@@ -1,0 +1,115 @@
+<section class="container">
+  <h1>Registro</h1>
+  <hr />
+
+  <!-- VERSIÓN CON FORM GROUP-->
+  <form class="card" [formGroup]="formulario" (ngSubmit)="enviarFormulario()">
+    <div class="card-body">
+      <div class="mb-1"> 
+        <label for="nombre">Nombre: </label>
+        <input class="ms-1 border border-dark" type="text" name="nombre" id="nombre" formControlName="nombre" placeholder="minimo 3 caracteres y maximo 15"/>
+        @if(nombre.errors?.["required"] && nombre.touched){
+          <small class="error">El campo nombre es requerido</small>
+        } @if(nombre.errors?.["minlength"] && nombre.touched){
+          <small class="error">El largo minimo es de {{ nombre.errors?.["minlength"].requiredLength }}</small>
+        }@if(nombre.errors?.["maxlength"] && nombre.touched ){
+          <small class="error">El largo maximo es de {{ nombre.errors?.["maxlength"].requiredLength }}</small>
+        }
+      </div>
+      <div class="mb-1">
+        <label for="apellido">Apellido : </label>
+        <input class="ms-1 border border-dark" type="text" name="apellido" id="apellido" formControlName="apellido" placeholder="minimo 3 caracteres y maximo 15"/>
+        @if(apellido.errors?.["required"] && apellido.touched ){
+          <small class="error">El campo apellido es requerido</small>
+        }
+        @if(apellido.errors?.["minlength"] && apellido.touched ){
+          <small class="error">El largo minimo es de {{ apellido.errors?.["minlength"].requiredLength }}</small>
+        }
+        @if(apellido.errors?.["maxlength"] && apellido.touched ){
+          <small class="error">El largo maximo es de {{ apellido.errors?.["maxlength"].requiredLength }}</small>
+        }
+      </div>
+      <div class="mb-1">
+        <label for="fechaNacimiento">Fecha de Nacimiento: </label>
+        <input class="ms-1 border border-dark" type="date" name="fechaNacimiento" id="fechaNacimiento" formControlName="fechaNacimiento" placeholder="fechaNacimiento mayor de 18"/>
+        @if(fechaNacimiento.errors?.["required"] && fechaNacimiento.touched ){
+          <small class="error">El campo fecha de Nacimiento es requerido</small>
+        }
+      </div>
+
+      <div class="mb-1">
+        <label for="nombreUsuario">Nombre de Usuario : </label>
+        <input class="ms-1 border border-dark" type="text" name="nombreUsuario" id="nombreUsuario" formControlName="nombreUsuario" placeholder="minimo 3 caracteres y maximo 20"/>
+        @if(nombreUsuario.errors?.["required"] && nombreUsuario.touched ){
+          <small class="error">El campo nombreUsuario es requerido</small>
+        }
+        @if(nombreUsuario.errors?.["minlength"] && nombreUsuario.touched ){
+          <small class="error">El largo minimo es de {{ nombreUsuario.errors?.["minlength"].requiredLength }}</small>
+        }
+        @if(nombreUsuario.errors?.["maxlength"] && nombreUsuario.touched ){
+          <small class="error">El largo maximo es de {{ nombreUsuario.errors?.["maxlength"].requiredLength }}</small>
+        }
+      </div>
+
+      <div class="mb-1">
+        <label for="correo">Correo: </label>
+        <input class="ms-1 border border-dark" type="email" name="correo" id="correo" formControlName="correo" placeholder="Debe contener @"/>
+        @if(correo.errors?.["required"] && correo.touched ){
+          <small class="error">El campo correo es requerido</small>
+        }
+        @if(correo.errors?.["email"] && correo.touched ){
+          <small class="error">El campo correo no tiene un formato valido</small>
+        }
+      </div>
+      <div class="mb-1">
+        <label for="contrasenia">Contraseña: </label>
+        <input class="ms-1 border border-dark" type="password" name="contrasenia" id="contrasenia" formControlName="contrasenia" placeholder="minimo 8 caracteres" />
+        @if(contrasenia.errors?.["required"] && contrasenia.touched ){
+          <small class="error">El campo contrasenia es requerido</small>
+        }
+        @if(contrasenia.errors?.["minlength"] && contrasenia.touched ){
+          <small class="error">El largo minimo es de {{ contrasenia.errors?.["minlength"].requiredLength }}</small>
+        }
+      </div>
+      <div class="mb-1">
+        <label for="repetirContrasenia">Repetir Contraseña: </label>
+        <input class="ms-1 border border-dark" type="password" name="repetirContrasenia" id="repetirContrasenia"formControlName="repetirContrasenia" placeholder="minimo 8 caracteres"/>
+        @if(repetirContrasenia.errors?.["required"] && repetirContrasenia.touched ){
+          <small class="error">El campo repetirContrasenia es requerido</small>
+        }
+        @if(repetirContrasenia.errors?.["minlength"] && repetirContrasenia.touched ){
+          <small class="error">El largo minimo es de {{ repetirContrasenia.errors?.["minlength"].requiredLength }}</small>
+        }
+        @if(repetirContrasenia.errors?.["iguales"] && repetirContrasenia.touched ){
+          <small class="error">ERROR, no coinciden sus contraseñas</small>
+        }
+
+        <div class="mb-1">
+        <label for="descripcion">Descripcion : </label>
+        <input class="ms-1 border border-dark" type="text" name="descripcion" id="descripcion" formControlName="descripcion" placeholder="minimo 3 caracteres y maximo 30"/>
+        @if(descripcion.errors?.["required"] && descripcion.touched ){
+          <small class="error">El campo descripcion es requerido</small>
+        }
+        @if(descripcion.errors?.["minlength"] && descripcion.touched ){
+          <small class="error">El largo minimo es de {{ descripcion.errors?.["minlength"].requiredLength }}</small>
+        }
+        @if(descripcion.errors?.["maxlength"] && descripcion.touched ){
+          <small class="error">El largo maximo es de {{ descripcion.errors?.["maxlength"].requiredLength }}</small>
+        }
+      </div>
+
+      <div class="mb-1">
+        <label for="foto">Foto de perfil: </label>
+        <input class="ms-1 border border-dark" type="file" name="foto" id="foto" formControlName="foto"/>
+        @if(foto.errors?.["required"] && foto.touched ){
+          <small class="error">El campo foto es requerido</small>
+        }
+        
+      </div>
+        
+
+      </div>
+      <button class="btn btn-success" type="submit" [disabled]="!this.formulario.valid">Crear Cuenta</button>
+    </div>
+  </form>
+</section>

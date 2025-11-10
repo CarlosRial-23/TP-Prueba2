@@ -1,0 +1,60 @@
+
+
+.container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  
+}
+
+.quick-login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px; 
+  z-index: 1000;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 1000px; 
+}
+
+.card {
+  padding: 2rem;
+  background-color: rgb(209, 210, 166);
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  
+}
+
+.form-label {
+  width: 150px; /* ancho fijo para alinear todos los labels */
+  margin-bottom: 0;  /* importante: evita que el label empuje al input hacia abajo */
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+  
+}
+
+.form-control {
+  flex: 1; /* toma el resto del espacio */
+  padding: 12px;
+  font-size: 16px;
+  border: 3px solid #44f252;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  margin-top: 10px;
+}
