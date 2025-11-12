@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -14,6 +15,7 @@ import {
 } from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,10 +41,17 @@ export class AuthService {
     return this.createToken(user.correo);
   }
 
-  register(user: CredencialesDTO) {
+  async register(user: CreateUsuarioDto) {
     // Valida usuario no existe y guarda
-    return this.createToken(user.correo);
+    const usuarioExistente = await this.usuariosService.findByEmail(user.correo);
+    if(usuarioExistente){
+      throw new ConflictException('El correo electrónico ya está registrado');
+    }
+    const nuevoUsuario = await this.usuariosService.create(user);
+    return this.createToken(nuevoUsuario.correo);
   }
+
+  
 
   // Ejemplo devuelve en body, trae desde header
 

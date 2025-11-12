@@ -13,10 +13,25 @@ export class Auth {
   logueo(usuario: Usuario): Observable<any>{  
     return this.httpClient.post(this.apiUrl + '/auth/login', usuario);
   }
+
+  registro(usuario: RegistroUsuario): Observable<any>{  
+    return this.httpClient.post(this.apiUrl + '/auth/register', usuario);
+  }
   
 }
 
 interface Usuario {
   correo:string;
   contrasenia:string;
+}
+
+interface RegistroUsuario {
+  nombre: string;
+  apellido: string;
+  correo: string;
+  nombreUsuario: string;
+  contrasenia: string;
+  fechaNacimiento: string; 
+  descripcion: string;
+  // Si tuviera el campo 'foto' activo, también debería ir aquí.
 }

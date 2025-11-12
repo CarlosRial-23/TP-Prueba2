@@ -19,17 +19,20 @@ export class UsuariosService {
     const usuarioExistente = await this.findByEmail(createUsuarioDto.correo);
     if (usuarioExistente) {
       // Si encontramos un usuario, lanzamos un error 409 (Conflict)
+      console.log("Usuario existente");
+      
       throw new ConflictException('El correo electrónico ya está registrado');
     }
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(createUsuarioDto.contrasenia, saltOrRounds);
-
+    console.log("Usuario Valido");
     const usuarioData = {
       ...createUsuarioDto, 
       contrasenia: hash,
     };
-
+    
     const usuario = new this.UsuarioModel(usuarioData);
+    console.log(`Usuario Valido --> ${usuario}`);
 
     try {
         const guardado = await usuario.save();

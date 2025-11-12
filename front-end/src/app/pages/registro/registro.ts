@@ -1,6 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import {
   AbstractControl,
   FormControl,
@@ -9,6 +10,9 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { Auth } from '../../services/auth';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-registro',
@@ -17,6 +21,8 @@ import {
   styleUrl: './registro.css',
 })
 export class Registro {
+  private authService = inject(Auth);
+  private router = inject(Router);
   nombre = new FormControl('', [
     Validators.required,
     Validators.minLength(3),
@@ -87,10 +93,21 @@ export class Registro {
   }
 
   enviarFormulario() {
-    console.log(this.formulario);
-    console.log(this.formulario.value);
-    console.log(this.formulario.get('nombre'));
+
+    const { repetirContrasenia, ...registroData } = this.formulario.value;
+    console.log('Datos a enviar:', registroData);
     
+    //Llamar al método de registro del servicio y suscribirse a la respuesta
+    this.authService.registro(registroData as any).subscribe({
+      next: (response) => {
+        this.showSuccessAlert("Registro éxitoso!","Ya puedes iniciar sesión.");
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error durante el registro:', err);
+        this.showErrorAlert("Error de registro!","No se pudo realizar el registro");
+      }
+    });
   }
 
   validarContrasenias(control: AbstractControl): ValidationErrors | null {
@@ -112,4 +129,22 @@ export class Registro {
       return error;
     }
   }
+
+  private showSuccessAlert(title:string,message: string) {
+      return Swal.fire({
+        title: title,
+        text: message,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+    }
+  private showErrorAlert(title:string, message: string) {
+      return Swal.fire({
+        title: 'Algo salió mal',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+
 }
