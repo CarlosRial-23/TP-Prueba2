@@ -7,6 +7,6 @@ export class CredencialesDTO {
 
   @IsString()
   @IsDefined()
-  contraseña:string;
+  contrasenia:string;
   
 }

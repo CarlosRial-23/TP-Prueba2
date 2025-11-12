@@ -1,32 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-interface Usuario {
-  usuario: string;
-  pasword: string;
-}
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
-  httpClient = Inject(HttpClient);
+  private httpClient = inject(HttpClient);
 
-  apiUrl = 'http://localhost:4200';
+  apiUrl = 'http://localhost:3000';
 
-
-  async logueo(usuario: Usuario) {
-    const peticion = this.httpClient.post(this.apiUrl + '/auth/login', usuario, {
-      // headers: {
-      //   'Content-Type': 'application/json',
-      // },
-    });
-
-    peticion.subscribe((respuesta: any) => {
-      console.log(respuesta);
-
-      localStorage.setItem('token', respuesta.token);
-    });
+  logueo(usuario: Usuario): Observable<any>{  
+    return this.httpClient.post(this.apiUrl + '/auth/login', usuario);
   }
-
   
+}
+
+interface Usuario {
+  correo:string;
+  contrasenia:string;
 }

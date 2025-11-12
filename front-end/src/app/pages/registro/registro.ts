@@ -55,9 +55,9 @@ export class Registro {
     Validators.pattern('^(?=.*[A-Z])(?=.*\\d).+$'),
     this.validarContrasenias
   ]);
-  foto = new FormControl('', [
-    Validators.required,
-  ]);
+  // foto = new FormControl('', [
+  //   Validators.required,
+  // ]);
 
   
   formulario = new FormGroup({
@@ -69,7 +69,7 @@ export class Registro {
     contrasenia: this.contrasenia,
     repetirContrasenia : this.repetirContrasenia,
     descripcion : this.descripcion,
-    foto: this.foto,
+    //foto: this.foto,
   });
 
   ngOnInit() {

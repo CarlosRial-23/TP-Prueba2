@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CredencialesDTO } from '../usuarios/dto/credencialesDto';
 import {
@@ -11,11 +12,30 @@ import {
   TokenExpiredError,
   verify,
 } from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
+import { UsuariosService } from 'src/usuarios/usuarios.service';
 
 @Injectable()
 export class AuthService {
-  login(user: CredencialesDTO) {
-    // Lee de la base de datos y confirma usuario válido y comprara contraseñas encriptadas.
+
+  constructor(private readonly usuariosService: UsuariosService) {}
+
+  async login(user: CredencialesDTO) {
+    // Buscar el usuario en la base de datos
+    const usuarioExistente = await this.usuariosService.findByEmail(user.correo);
+
+    if (!usuarioExistente) {
+      throw new InternalServerErrorException('Usuario no registrado');
+    }
+
+    // Comparar contraseñas
+    const esValida = await bcrypt.compare(user.contrasenia, usuarioExistente.contrasenia);
+
+    if (!esValida) {
+      throw new UnauthorizedException('Contraseña incorrecta');
+    }
+
+    // Si todo está bien, generar el token
     return this.createToken(user.correo);
   }
 
