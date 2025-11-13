@@ -29,6 +29,16 @@ export class Login {
     contrasenia: this.contrasenia,
   });
 
+  get correoControl() {
+    return this.formulario.get('correo')!;
+  }
+
+  get contraseniaControl() {
+    return this.formulario.get('contrasenia')!;
+  }
+
+  
+
   iniciarSesion() {
   if (this.formulario.valid) {
    const { correo, contrasenia } = this.formulario.value;
@@ -46,26 +56,35 @@ export class Login {
           localStorage.setItem('token', respuesta.token);
 
           // 3. Muestra alerta de éxito
-          this.showSuccessAlert("¡Ingreso exitoso!");
+          this.showSuccessAlert("¡Ingreso exitoso!", "Bienvenido a nuestra Red Social");
 
           // 4. Navega
           this.router.navigate(["/perfil"]);
         },
         error: (err) => {
           console.error("Error en el inicio de sesión:", err);
-          // this.showErrorAlert("Usuario o contraseña incorrectos");
+          this.showErrorAlert("ERROR en Logueo!","Usuario o contraseña incorrectos");
         }
       });
   }
+  
 }
-
-  private showSuccessAlert(message: string) {
-    return Swal.fire({
-      title: 'Ingreso exitoso',
-      text: message,
-      icon: 'success',
-      confirmButtonText: 'OK'
-    });
-  }
+  
+  private showSuccessAlert(title:string,message: string) {
+        return Swal.fire({
+          title: title,
+          text: message,
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+      }
+    private showErrorAlert(title:string, message: string) {
+        return Swal.fire({
+          title: title,
+          text: message,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
 
 }

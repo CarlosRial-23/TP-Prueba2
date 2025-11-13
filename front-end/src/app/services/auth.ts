@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from './../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class Auth {
   private httpClient = inject(HttpClient);
 
-  apiUrl = 'http://localhost:3000';
+  apiUrl = environment.apiUrl;
 
   logueo(usuario: Usuario): Observable<any>{  
     return this.httpClient.post(this.apiUrl + '/auth/login', usuario);
@@ -33,5 +34,5 @@ interface RegistroUsuario {
   contrasenia: string;
   fechaNacimiento: string; 
   descripcion: string;
-  // Si tuviera el campo 'foto' activo, también debería ir aquí.
+  urlFoto: string;
 }

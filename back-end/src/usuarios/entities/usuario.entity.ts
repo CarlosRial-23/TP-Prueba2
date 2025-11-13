@@ -21,6 +21,8 @@ export class Usuario {
     descripcion:string;
     @Prop({default:"usuario"})
     perfil:string;
+    @Prop({default:null})
+    urlFoto:string;
 
 }
 

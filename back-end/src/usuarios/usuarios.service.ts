@@ -19,30 +19,24 @@ export class UsuariosService {
     const usuarioExistente = await this.findByEmail(createUsuarioDto.correo);
     if (usuarioExistente) {
       // Si encontramos un usuario, lanzamos un error 409 (Conflict)
-      console.log("Usuario existente");
-      
       throw new ConflictException('El correo electrónico ya está registrado');
     }
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(createUsuarioDto.contrasenia, saltOrRounds);
-    console.log("Usuario Valido");
     const usuarioData = {
       ...createUsuarioDto, 
       contrasenia: hash,
+      fechaNacimiento: new Date(createUsuarioDto.fechaNacimiento),
     };
     
     const usuario = new this.UsuarioModel(usuarioData);
-    console.log(`Usuario Valido --> ${usuario}`);
+    
 
     try {
         const guardado = await usuario.save();
         return guardado;
     } catch (error) {
-        // Imprime el error completo de Mongoose/DB en la consola del servidor
         console.error('Error al guardar usuario en la DB:', error);
-
-        // Lanza una excepción controlada (500 Internal Server Error)
-        // El mensaje de error puede ser más específico para debuggear
         throw new InternalServerErrorException('Error desconocido al crear el usuario. Revise los logs del servidor para detalles del error de Mongoose.');
     }
   }

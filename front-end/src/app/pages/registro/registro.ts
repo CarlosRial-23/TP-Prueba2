@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import {
@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { Router } from '@angular/router';
+import { Supabase } from '../../services/supabase';
 
 
 @Component({
@@ -23,6 +24,12 @@ import { Router } from '@angular/router';
 export class Registro {
   private authService = inject(Auth);
   private router = inject(Router);
+  protected readonly title = signal('client');
+  supaService = inject(Supabase);
+  selectedFile = signal<File | null>(null);
+  urlFoto = signal<string | null>(null);
+  lasPath = signal<string | null>(null);
+
   nombre = new FormControl('', [
     Validators.required,
     Validators.minLength(3),
@@ -61,10 +68,9 @@ export class Registro {
     Validators.pattern('^(?=.*[A-Z])(?=.*\\d).+$'),
     this.validarContrasenias
   ]);
-  // foto = new FormControl('', [
-  //   Validators.required,
-  // ]);
-
+  urlImagen = new FormControl('', [
+    Validators.required, 
+  ]);
   
   formulario = new FormGroup({
     nombre: this.nombre,
@@ -75,7 +81,6 @@ export class Registro {
     contrasenia: this.contrasenia,
     repetirContrasenia : this.repetirContrasenia,
     descripcion : this.descripcion,
-    //foto: this.foto,
   });
 
   ngOnInit() {
@@ -95,7 +100,11 @@ export class Registro {
   enviarFormulario() {
 
     const { repetirContrasenia, ...registroData } = this.formulario.value;
-    console.log('Datos a enviar:', registroData);
+    this.upload();
+    const urlFoto = this.lasPath();
+    const dataAEnviar = { ...registroData, urlFoto };
+
+  console.log('Datos a enviar:', dataAEnviar);
     
     //Llamar al método de registro del servicio y suscribirse a la respuesta
     this.authService.registro(registroData as any).subscribe({
@@ -128,6 +137,44 @@ export class Registro {
     } else {
       return error;
     }
+  }
+
+  onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+    this.selectedFile.set(file);
+  }
+
+  async upload() {
+    if (!this.selectedFile()) return;
+
+    const file = this.selectedFile();
+    const path = `perfiles/${file?.name}`;
+    this.lasPath.set(path);
+
+    const { data, error } = await this.supaService.uploadFile('fotos', path, file!);
+
+    if (error) {
+      console.error('Error al subir el archivo: ', error);
+      this.showErrorAlert("ERROR de carga!","Error al subir el archivo");
+    }
+
+    const publicUrl = await this.supaService.getPublicUrl('fotos', path);
+    this.urlFoto.set(publicUrl);
+  }
+
+  async delete() {
+    if (!this.lasPath()) return;
+
+    const { data, error } = await this.supaService.removeFile('fotos', this.lasPath()!);
+    if (error) {
+      console.error('Error al eliminar archivo: ', error);
+      this.showErrorAlert("ERROR al eliminar","Error al eliminar archivo");
+    }
+
+    console.log('archivo eliminado exitosamente!');
+    this.showSuccessAlert("Archivo Eliminado!","foto eliminada exitosamente!");
+    this.urlFoto.set(null);
+    this.lasPath.set(null);
   }
 
   private showSuccessAlert(title:string,message: string) {

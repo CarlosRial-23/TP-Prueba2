@@ -109,14 +109,17 @@
         }
       </div>
 
-      <!-- <div class="mb-1">
+      <div class="mb-1">
         <label for="foto">Foto de perfil: </label>
-        <input class="ms-1 border border-dark" type="file" name="foto" id="foto" formControlName="foto"/>
-        @if(foto.errors?.["required"] && foto.touched ){
-          <small class="error">El campo foto es requerido</small>
-        }
+        <input class="ms-1 border border-dark" type="file" (change)="onFileSelected($event)" name="foto" id="foto" formControlName="foto"/>
         
-      </div> -->
+        <!-- @if(this.urlFoto()){
+          <img [src]="this.urlFoto()" alt="" style="width: 300px;">
+          <p>{{this.urlFoto()}}</p>
+          <button (click)="delete()">Eliminar archivo</button>
+        } -->
+        
+      </div>
         
 
       </div>

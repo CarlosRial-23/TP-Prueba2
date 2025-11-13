@@ -37,6 +37,10 @@ export class CreateUsuarioDto {
 
     @IsOptional()
     @IsString()
+    urlFoto?:string;
+
+    @IsOptional()
+    @IsString()
     @IsDefined()
     perfil?:string;
 
