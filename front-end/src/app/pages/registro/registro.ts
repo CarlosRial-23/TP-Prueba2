@@ -97,17 +97,17 @@ export class Registro {
     });
   }
 
-  enviarFormulario() {
+  async enviarFormulario() {
 
     const { repetirContrasenia, ...registroData } = this.formulario.value;
-    this.upload();
+    await this.upload();
     const urlFoto = this.lasPath();
     const dataAEnviar = { ...registroData, urlFoto };
 
-  console.log('Datos a enviar:', dataAEnviar);
+    console.log('Datos a enviar:', dataAEnviar);
     
     //Llamar al método de registro del servicio y suscribirse a la respuesta
-    this.authService.registro(registroData as any).subscribe({
+    this.authService.registro(dataAEnviar as any).subscribe({
       next: (response) => {
         this.showSuccessAlert("Registro éxitoso!","Ya puedes iniciar sesión.");
         this.router.navigate(['/login']);

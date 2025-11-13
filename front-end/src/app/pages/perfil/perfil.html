@@ -1,1 +1,6 @@
 <p>perfil works!</p>
+
+@if(this.urlFoto()){
+<img [src]="this.urlFoto()" alt="" style="width: 300px;">
+<p>{{this.urlFoto()}}</p>
+}
