@@ -1,11 +1,94 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { PublicacionesService } from '../../services/publicaciones.service';
+import { CommonModule } from '@angular/common';
+import { Publicacion } from '../../components/publicacion/publicacion'; 
+import { Auth } from '../../services/auth';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, Publicacion],
   templateUrl: './publicaciones.html',
-  styleUrl: './publicaciones.css',
 })
-export class Publicaciones {
+export class Publicaciones implements OnInit {
+  private pubService = inject(PublicacionesService);
+  private authService = inject(Auth);
 
+  publicaciones = signal<any[]>([]);
+  totalPublicaciones = signal(0);
+  orden = signal<'fecha' | 'likes'>('fecha');
+  limit = signal(10);
+  offset = signal(0);
+  
+  currentUser = this.authService.currentUser; 
+
+  ngOnInit() {
+    this.cargarPublicaciones();
+  }
+
+  cargarPublicaciones() {
+    this.pubService
+      .getPublicaciones(
+        this.limit(),
+        this.offset(),
+        this.orden()
+      )
+      .subscribe((res) => {
+        this.publicaciones.set(res.publicaciones);
+        this.totalPublicaciones.set(res.total);
+      });
+  }
+
+  cambiarOrden(nuevoOrden: 'fecha' | 'likes') {
+    this.orden.set(nuevoOrden);
+    this.offset.set(0);
+    this.cargarPublicaciones();
+  }
+
+  paginar(cantidad: number) {
+    const nuevoOffset = this.offset() + cantidad;
+ 
+    if (nuevoOffset >= 0 && nuevoOffset < this.totalPublicaciones()) {
+      this.offset.set(nuevoOffset);
+      this.cargarPublicaciones();
+    }
+  }
+
+  onLike(publicacionId: string) {
+    this.pubService.like(publicacionId).subscribe(resActualizada => {
+      
+      this.publicaciones.update(pubs => 
+        pubs.map(p => p._id === publicacionId ? resActualizada : p)
+      );
+    });
+  }
+
+  onUnlike(publicacionId: string) {
+    this.pubService.unlike(publicacionId).subscribe(resActualizada => {
+      this.publicaciones.update(pubs => 
+        pubs.map(p => p._id === publicacionId ? resActualizada : p)
+      );
+    });
+  }
+
+  onDelete(publicacionId: string) {
+    // Aquí puedes añadir un modal de confirmación (SweetAlert2)
+    this.showSuccessAlert("Elimininacion Exitosa","Se ha eliminado la publicacion exitosamente");
+    this.pubService.delete(publicacionId).subscribe(() => {
+      this.publicaciones.update(pubs => 
+        pubs.filter(p => p._id !== publicacionId)
+      );
+      this.totalPublicaciones.update(t => t - 1);
+    });
+  }
+
+  private showSuccessAlert(title:string,message: string) {
+    return Swal.fire({
+      title: title,
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
 }
