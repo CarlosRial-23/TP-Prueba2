@@ -1,1 +1,36 @@
-<p>publicaciones works!</p>
+<div>
+  <h1>Publicaciones</h1>
+
+  <div>
+    <label>Ordenar por: </label>
+    <select (change)="cambiarOrden($any($event.target).value === 'fecha' ? 'fecha' : 'likes')" [value]="orden()">
+      <option value="fecha">Más recientes</option>
+      <option value="likes">Más populares</option>
+    </select>
+  </div>
+
+  @if (publicaciones().length > 0) {
+    <div class="publicaciones-container">
+      @for (pub of publicaciones(); track pub._id) {
+        <app-publicacion 
+          [publicacion]="pub" 
+          [currentUserId]="currentUserId()"
+          (onLike)="onLike($event)"
+          (onUnlike)="onUnlike($event)"
+          (onDelete)="onDelete($event)"
+        />
+      }
+    </div>
+  } @else {
+    <p>No hay publicaciones para mostrar.</p>
+  }
+
+  <div class="paginacion">
+    <button (click)="paginar(-limit())" [disabled]="offset() === 0">Anterior</button>
+    <span>
+      Mostrando {{ offset() + 1 }} - {{ offset() + publicaciones().length }} de {{ totalPublicaciones() }}
+    </span>
+    <button (click)="paginar(limit())" [disabled]="offset() + limit() >= totalPublicaciones()">Siguiente</button>
+  </div>
+
+</div>

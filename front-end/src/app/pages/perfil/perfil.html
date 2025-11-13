@@ -1,6 +1,38 @@
-<p>perfil works!</p>
+@if (usuario()) {
+  <div>
+    <h1>Perfil de {{ usuario()?.nombreUsuario }}</h1>
+    
+    @if (usuario()?.urlFoto) {
+      <img [src]="usuario()?.urlFoto" alt="Foto de perfil" style="width: 150px; border-radius: 50%;">
+    } @else {
+      <p>(Sin foto de perfil)</p>
+    }
+    
+    <p><strong>Nombre:</strong> {{ usuario()?.nombre }} {{ usuario()?.apellido }}</p>
+    <p><strong>Descripción:</strong> {{ usuario()?.descripcion }}</p>
+    <p><strong>Email:</strong> {{ usuario()?.correo }}</p>
 
-@if(this.urlFoto()){
-<img [src]="this.urlFoto()" alt="" style="width: 300px;">
-<p>{{this.urlFoto()}}</p>
+  </div>
+
+  <hr>
+  <h2>Mis últimas 3 publicaciones</h2>
+
+  @if (misPublicaciones().length > 0) {
+    <div class="publicaciones-container">
+      @for (pub of misPublicaciones(); track pub._id) {
+        <app-publicacion 
+          [publicacion]="pub" 
+          [currentUserId]="currentUserId()"
+          (onLike)="onLike($event)"
+          (onUnlike)="onUnlike($event)"
+          (onDelete)="onDelete($event)"
+        />
+      }
+    </div>
+  } @else {
+    <p>Aún no has realizado publicaciones.</p>
+  }
+
+} @else {
+  <p>Cargando perfil...</p>
 }

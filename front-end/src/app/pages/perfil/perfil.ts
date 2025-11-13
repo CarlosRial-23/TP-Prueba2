@@ -1,13 +1,12 @@
-import { Supabase } from '../../services/supabase';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core'; 
 import { Auth } from '../../services/auth';
 import { PublicacionesService } from '../../services/publicaciones.service';
 import { CommonModule } from '@angular/common';
-import { Publicacion } from '../../components/publicacion/publicacion';
+import { Publicacion } from '../../components/publicacion/publicacion'; 
 
 @Component({
   selector: 'app-perfil',
-  standalone: true,
+  standalone: true, 
   imports: [CommonModule, Publicacion], 
   templateUrl: './perfil.html',
 })
@@ -17,6 +16,8 @@ export class Perfil implements OnInit {
 
   usuario = this.authService.currentUser;
   
+  currentUserId = computed(() => this.authService.currentUser()?.id);
+
   misPublicaciones = signal<any[]>([]);
 
   ngOnInit() {
@@ -27,7 +28,7 @@ export class Perfil implements OnInit {
     const user = this.usuario();
     if (user && user.id) { 
       this.pubService
-        .getPublicaciones(3, 0, 'fecha', user.id)
+        .getPublicaciones(3, 0, 'fecha', user.id) 
         .subscribe((res) => {
           this.misPublicaciones.set(res.publicaciones);
         });
@@ -38,6 +39,22 @@ export class Perfil implements OnInit {
     this.pubService.delete(publicacionId).subscribe(() => {
       this.misPublicaciones.update(pubs => 
         pubs.filter(p => p._id !== publicacionId)
+      );
+    });
+  }
+
+  onLike(publicacionId: string) {
+    this.pubService.like(publicacionId).subscribe(resActualizada => {
+      this.misPublicaciones.update(pubs => 
+        pubs.map(p => p._id === publicacionId ? resActualizada : p)
+      );
+    });
+  }
+
+  onUnlike(publicacionId: string) {
+    this.pubService.unlike(publicacionId).subscribe(resActualizada => {
+      this.misPublicaciones.update(pubs => 
+        pubs.map(p => p._id === publicacionId ? resActualizada : p)
       );
     });
   }
