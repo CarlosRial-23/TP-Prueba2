@@ -104,7 +104,7 @@ export class Registro {
     const urlFoto = this.lasPath();
     const dataAEnviar = { ...registroData, urlFoto };
 
-    console.log('Datos a enviar:', dataAEnviar);
+    //console.log('Datos a enviar:', dataAEnviar);
     
     //Llamar al método de registro del servicio y suscribirse a la respuesta
     this.authService.registro(dataAEnviar as any).subscribe({
