@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environments';
 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -27,6 +28,10 @@ export class PublicacionesService {
 
     return this.http.get(this.apiUrl, { params });
   }
+
+  getById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`);
+  }  
 
   like(publicacionId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/${publicacionId}/like`, {});

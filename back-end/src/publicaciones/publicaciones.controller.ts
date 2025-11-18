@@ -37,6 +37,13 @@ export class PublicacionesController {
     return this.publicacionesService.findAll(limit, offset, orden, autorId);
   }
 
+  @Get(':id')
+  findOne(
+    @Param('id') id: string){ 
+      return this.publicacionesService.findOne(id); 
+  }
+  
+
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req) {
     const userId = req.user.id;

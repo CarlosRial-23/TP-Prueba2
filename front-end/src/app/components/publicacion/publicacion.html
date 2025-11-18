@@ -1,1 +1,30 @@
-<p>publicacion works!</p>
+<div class="card">
+  @if (publicacion.urlImagen) {
+    <img 
+      [src]="publicacion.urlImagen" 
+      [routerLink]="['/publicacion', publicacion._id]" 
+      class="card-img-top" 
+      style="cursor: pointer" 
+      alt="Imagen publicación">
+  }
+
+  <div class="card-body">
+    <h3 [routerLink]="['/publicacion', publicacion._id]" style="cursor: pointer">
+      {{ publicacion.titulo }}
+    </h3>
+    
+    <p>{{ publicacion.descripcion }}</p>
+    
+    <div class="acciones">
+      @if (usuarioDioLike()) {
+        <button (click)="onUnlike.emit(publicacion._id)">Ya no me gusta</button>
+      } @else {
+        <button (click)="onLike.emit(publicacion._id)">Me gusta</button>
+      }
+
+      @if (currentUserId === publicacion.autor?._id) {
+        <button (click)="onDelete.emit(publicacion._id)" style="color: red;">Eliminar</button>
+      }
+    </div>
+  </div>
+</div>

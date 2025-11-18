@@ -55,6 +55,19 @@ export class PublicacionesService {
     return { publicaciones, total };
   }
 
+  async findOne(id: string) {
+    const publicacion = await this.publicacionModel
+      .findById(id)
+      .populate('autor', 'nombreUsuario urlFoto')
+      .exec();
+
+    if (!publicacion) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+    
+    return publicacion;
+  }
+
   private async findAllSortedByLikes(filtros: any, limit: number, offset: number) {
     const publicaciones = await this.publicacionModel.aggregate([
       { $match: filtros }, 

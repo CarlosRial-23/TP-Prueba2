@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Importar CommonModule
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true, 
-  imports: [CommonModule], 
+  imports: [CommonModule, RouterLink], 
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
 })

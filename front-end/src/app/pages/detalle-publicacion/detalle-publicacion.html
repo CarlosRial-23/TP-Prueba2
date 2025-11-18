@@ -1,0 +1,63 @@
+<div class="detalle-container">
+  @if (publicacion) {
+    <app-publicacion 
+      [publicacion]="publicacion" 
+      [currentUserId]="authService.currentUser()?.id">
+    </app-publicacion>
+  }
+
+  <div class="seccion-comentarios">
+    <h3>Comentarios ({{ totalComentarios }})</h3>
+
+    <div class="nuevo-comentario">
+      <textarea 
+        [(ngModel)]="nuevoComentario" 
+        placeholder="Escribe un comentario..." 
+        rows="3">
+      </textarea>
+      <button (click)="enviarComentario()" [disabled]="!nuevoComentario.trim()">
+        Comentar
+      </button>
+    </div>
+
+    <div class="lista-comentarios">
+      @for (comentario of comentarios(); track comentario._id) {
+        <div class="comentario-item">
+          <div class="comentario-header">
+            <strong>{{ comentario.autor?.nombreUsuario }}</strong>
+            <span class="fecha">{{ comentario.createdAt | date:'short' }}</span>
+            @if (comentario.modificado) {
+              <span class="editado-label">(Editado)</span>
+            }
+          </div>
+
+          @if (comentarioEditandoId !== comentario._id) {
+            <p class="mensaje">{{ comentario.mensaje }}</p>
+            
+            @if (authService.currentUser()?.id === comentario.autor?._id) {
+              <button class="btn-link" (click)="iniciarEdicion(comentario)">Editar</button>
+            }
+          } 
+          
+          @else {
+            <div class="edicion-box">
+              <textarea [(ngModel)]="textoEdicion" rows="2"></textarea>
+              <div class="acciones-edicion">
+                <button (click)="guardarEdicion()">Guardar</button>
+                <button (click)="cancelarEdicion()" class="btn-secondary">Cancelar</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @empty {
+        <p>No hay comentarios aún. ¡Sé el primero!</p>
+      }
+    </div>
+
+    @if (comentarios().length < totalComentarios) {
+      <button class="btn-cargar-mas" (click)="cargarMasComentarios()">
+        Cargar más comentarios
+      </button>
+    }
+  </div>
+</div>

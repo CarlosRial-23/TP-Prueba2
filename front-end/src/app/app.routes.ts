@@ -22,4 +22,8 @@ export const routes: Routes = [
     path: 'publicaciones',
     loadComponent: () => import('./pages/publicaciones/publicaciones').then((c) => c.Publicaciones),
   },
+  {
+    path: 'publicacion/:id',
+    loadComponent: () => import('./pages/detalle-publicacion/detalle-publicacion').then(c => c.DetallePublicacion),
+  },
   ];
