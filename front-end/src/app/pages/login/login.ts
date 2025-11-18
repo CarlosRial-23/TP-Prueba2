@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 
-
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, FormsModule],
@@ -37,28 +36,22 @@ export class Login {
     return this.formulario.get('contrasenia')!;
   }
 
-  
-
   iniciarSesion() {
-  if (this.formulario.valid) {
-   const { correo, contrasenia } = this.formulario.value;
+    if (this.formulario.valid) {
+      const { correo, contrasenia } = this.formulario.value;
       const credenciales = { correo: correo!, contrasenia: contrasenia! };
-   
-      // El componente se suscribe UNA SOLA VEZ
-   this.auth.logueo(credenciales).subscribe({
-        next: (respuesta: any) => {
-          // Y el componente hace TODO lo que tenga que pasar
-          
-          // 1. Imprime en consola
-          console.log(respuesta); 
-          
-          // 2. Guarda el token
-          localStorage.setItem('token', respuesta.token);
 
-          // 3. Muestra alerta de éxito
+      // El componente se suscribe UNA SOLA VEZ
+      this.auth.logueo(credenciales).subscribe({
+        next: (respuesta: any) => {
+          // 1. Imprime en consola
+          // 'respuesta' ahora contiene el token y el objeto completo del usuario
+          console.log("Login y obtención de datos de usuario exitosos", respuesta); 
+          
+          // 2. Muestra alerta de éxito
           this.showSuccessAlert("¡Ingreso exitoso!", "Bienvenido a nuestra Red Social");
 
-          // 4. Navega
+          // 3. Navega
           this.router.navigate(["/perfil"]);
         },
         error: (err) => {
@@ -66,10 +59,9 @@ export class Login {
           this.showErrorAlert("ERROR en Logueo!","Usuario o contraseña incorrectos");
         }
       });
+    }
   }
-  
-}
-  
+
   private showSuccessAlert(title:string,message: string) {
         return Swal.fire({
           title: title,
@@ -88,3 +80,5 @@ export class Login {
       }
 
 }
+
+
