@@ -16,6 +16,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -95,6 +96,14 @@ export class AuthService {
 
       throw new InternalServerErrorException();
     }
+  }
+
+  refreshToken(user: CredencialesDTO) {
+      
+    
+    return {
+      token: this.createToken(user.correo), // Genera uno nuevo con 15m más
+    };
   }
   
 }
