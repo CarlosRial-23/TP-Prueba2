@@ -1,0 +1,24 @@
+.crear-publicacion {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+.form-group { margin-bottom: 15px; }
+
+input, textarea { 
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px; 
+}
+
+button.btn-publicar {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+button.btn-publicar:disabled { background-color: #ccc; }

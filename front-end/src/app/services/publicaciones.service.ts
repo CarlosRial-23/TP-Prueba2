@@ -37,6 +37,10 @@ export class PublicacionesService {
     return this.http.post(`${this.apiUrl}/${publicacionId}/like`, {});
   }
 
+  create(publicacion: any): Observable<any> {
+    return this.http.post(this.apiUrl, publicacion);
+  }
+
   unlike(publicacionId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${publicacionId}/like`);
   }

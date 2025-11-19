@@ -1,7 +1,34 @@
-<div>
+<div class="container">
   <h1>Publicaciones</h1>
 
-  <div>
+  <div class="crear-publicacion">
+    <h3>¿Qué estás pensando?</h3>
+    <form [formGroup]="form" (ngSubmit)="crearPublicacion()">
+      
+      <div class="form-group">
+        <input type="text" placeholder="Título" formControlName="titulo">
+      </div>
+      
+      <div class="form-group">
+        <textarea placeholder="Escribe tu mensaje aquí..." rows="3" formControlName="mensaje"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="fileInput">Imagen (Opcional): </label>
+        <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+
+      <button type="submit" class="btn-publicar" [disabled]="form.invalid || isSubmitting()">
+        @if (isSubmitting()) {
+          Publicando...
+        } @else {
+          Publicar
+        }
+      </button>
+    </form>
+  </div>
+  <hr>
+  <div class="filtros">
     <label>Ordenar por: </label>
     <select (change)="cambiarOrden($any($event.target).value === 'fecha' ? 'fecha' : 'likes')" [value]="orden()">
       <option value="fecha">Más recientes</option>

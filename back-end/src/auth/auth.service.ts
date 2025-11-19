@@ -24,32 +24,31 @@ export class AuthService {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   async login(user: CredencialesDTO) {
-    // Buscar el usuario en la base de datos
     const usuarioExistente = await this.usuariosService.findByEmail(user.correo);
 
     if (!usuarioExistente) {
       throw new InternalServerErrorException('Usuario no registrado');
     }
 
-    // Comparar contraseñas
     const esValida = await bcrypt.compare(user.contrasenia, usuarioExistente.contrasenia);
 
     if (!esValida) {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
-    // Si todo está bien, generar el token
-    return this.createToken(user.correo);
+    // CORRECCIÓN: Pasar el objeto de usuario completo (con _id y perfil)
+    return this.createToken(usuarioExistente);
   }
 
   async register(user: CreateUsuarioDto) {
-    // Valida usuario no existe y guarda
     const usuarioExistente = await this.usuariosService.findByEmail(user.correo);
     if(usuarioExistente){
       throw new ConflictException('El correo electrónico ya está registrado');
     }
     const nuevoUsuario = await this.usuariosService.create(user);
-    return this.createToken(nuevoUsuario.correo);
+    
+    // CORRECCIÓN: Pasar el nuevo usuario completo
+    return this.createToken(nuevoUsuario);
   }
 
   async getProfile(correo: string) {
@@ -60,27 +59,25 @@ export class AuthService {
 
   // Ejemplo devuelve en body, trae desde header
 
-  createToken(username: string) {
-    const payload: { correo: string; admin: boolean } = {
-        
-        correo: username,
-        admin: false,
-        
+  createToken(user: any) {
+    const payload = {
+        // MongoDB usa _id, nos aseguramos de enviarlo como 'id' para que el controlador lo lea fácil
+        id: user._id || user.id, 
+        correo: user.correo,
+        // Importante: Usar el perfil real del usuario, no hardcodeado
+        perfil: user.perfil || 'usuario', 
+        admin: user.perfil === 'administrador' // Mantener compatibilidad si usas este flag
     };
    
-    // Necesito crear un token, sign es el método
-
     const token: string = sign(payload, process.env.CONTRASENA_SECRETA_DEL_SERVER!, {
       expiresIn: '15m',
     });
-    
-    
 
     return { token: token };
   }
 
   verificar(authHeader: string) {
-    console.log(authHeader); // Bearer token
+    // console.log(authHeader); 
     if (!authHeader) throw new BadRequestException();
 
     const [tipo, token] = authHeader.split(' ');
@@ -89,7 +86,7 @@ export class AuthService {
 
     try {
       const tokenValidado = verify(token, process.env.CONTRASENA_SECRETA_DEL_SERVER!);
-      return tokenValidado; // info de la payload
+      return tokenValidado; 
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         return 'Token expirado';
@@ -102,11 +99,9 @@ export class AuthService {
     }
   }
 
-  refreshToken(user: CredencialesDTO) {
-      
-    
+  refreshToken(userPayload: any) {
     return {
-      token: this.createToken(user.correo), // Genera uno nuevo con 15m más
+      token: this.createToken(userPayload).token, 
     };
   }
   
