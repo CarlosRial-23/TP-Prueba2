@@ -100,6 +100,39 @@ export class Registro {
   async enviarFormulario() {
 
     const { repetirContrasenia, ...registroData } = this.formulario.value;
+    
+    // 1. Subir archivo y obtener URL
+    await this.upload();
+    
+    // 2. CORRECCIÓN AQUÍ:
+    // Antes usabas this.lasPath() (que es solo "perfiles/foto.png")
+    // Ahora debes usar this.urlFoto() (que tiene la https://supabase...)
+    const urlFoto = this.urlFoto(); 
+
+    // Validación opcional por si falló la carga
+    if (!urlFoto) {
+      this.showErrorAlert("Error", "Debes subir una imagen válida antes de registrarte.");
+      return;
+    }
+
+    const dataAEnviar = { ...registroData, urlFoto };
+
+    //Llamar al método de registro del servicio...
+    this.authService.registro(dataAEnviar as any).subscribe({
+      next: (response) => {
+        this.showSuccessAlert("Registro éxitoso!","Ya puedes iniciar sesión.");
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error durante el registro:', err);
+        this.showErrorAlert("Error de registro!","No se pudo realizar el registro");
+      }
+    });
+  }
+
+  async enviarFormulario1() {
+
+    const { repetirContrasenia, ...registroData } = this.formulario.value;
     await this.upload();
     const urlFoto = this.lasPath();
     const dataAEnviar = { ...registroData, urlFoto };

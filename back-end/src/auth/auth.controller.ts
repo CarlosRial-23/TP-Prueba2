@@ -4,6 +4,7 @@ import { CreateUsuarioDto } from '../usuarios/dto/create-usuario.dto';
 import { CredencialesDTO } from '../usuarios/dto/credencialesDto';
 import { JwtGuard } from '../guards/jwt/jwt.guard';
 
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -18,14 +19,15 @@ export class AuthController {
     return this.authService.register(createUsuarioDto);
   }
 
-  // REQUISITO: Ruta Autorizar
   @UseGuards(JwtGuard)
   @Post('autorizar')
   @HttpCode(HttpStatus.OK)
-  autorizar(@Req() req) {
-    // Si el JwtGuard permite pasar, el token es válido.
-    // Devolvemos el usuario decodificado (req.user)
-    return { status: 'ok', usuario: req.user };
+  async autorizar(@Req() req) {
+    // Ahora req.user YA EXISTE gracias al JwtGuard corregido.
+    // Usamos el correo del token para buscar todos los datos en la BD
+    const usuarioCompleto = await this.authService.getProfile(req.user.correo);
+    
+    return { status: 'ok', usuario: usuarioCompleto };
   }
 
   // REQUISITO: Ruta Refrescar

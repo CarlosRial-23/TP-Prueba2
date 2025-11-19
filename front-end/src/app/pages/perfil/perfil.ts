@@ -15,9 +15,7 @@ export class Perfil implements OnInit {
   private pubService = inject(PublicacionesService);
 
   usuario = this.authService.currentUser;
-  
-  currentUserId = computed(() => this.authService.currentUser()?.id);
-
+  currentUserId = computed(() => this.authService.currentUser()?.id || this.authService.currentUser()?._id);
   misPublicaciones = signal<any[]>([]);
 
   ngOnInit() {
@@ -26,9 +24,12 @@ export class Perfil implements OnInit {
 
   cargarMisPublicaciones() {
     const user = this.usuario();
-    if (user && user.id) { 
+    // Asegúrate de usar la propiedad correcta (_id o id)
+    const userId = user?.id || user?._id; 
+    
+    if (userId) { 
       this.pubService
-        .getPublicaciones(3, 0, 'fecha', user.id) 
+        .getPublicaciones(3, 0, 'fecha', userId) 
         .subscribe((res) => {
           this.misPublicaciones.set(res.publicaciones);
         });

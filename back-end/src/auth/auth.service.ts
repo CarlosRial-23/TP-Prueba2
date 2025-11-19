@@ -52,7 +52,11 @@ export class AuthService {
     return this.createToken(nuevoUsuario.correo);
   }
 
-  
+  async getProfile(correo: string) {
+    // Busca el usuario completo en la BD usando el correo del token
+    const usuario = await this.usuariosService.findByEmail(correo);
+    return usuario;
+  }
 
   // Ejemplo devuelve en body, trae desde header
 
