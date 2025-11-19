@@ -1,9 +1,15 @@
 <div class="contenedor">
     <nav class="navegacion">
-        <button routerLink="login">Login</button>
-        <button routerLink="registro">Registro</button>
-        <button routerLink="perfil">Mi Perfil</button>
-        <button routerLink="publicaciones">Publicaciones</button>
+        @if (!authService.currentUser()) {
+            <button routerLink="login">Login</button>
+            <button routerLink="registro">Registro</button>
+        } 
+        
+        @else {
+            <button routerLink="perfil">Mi Perfil</button>
+            <button routerLink="publicaciones">Publicaciones</button>
+            <button (click)="authService.logout()">Cerrar Sesión</button>
+        }
     </nav>
 </div>
 

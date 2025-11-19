@@ -181,7 +181,9 @@ export class Registro {
     if (!this.selectedFile()) return;
 
     const file = this.selectedFile();
-    const path = `perfiles/${file?.name}`;
+    const timestamp = Date.now();
+    const path = `perfiles/${timestamp}_${file?.name}`; 
+    
     this.lasPath.set(path);
 
     const { data, error } = await this.supaService.uploadFile('fotos', path, file!);

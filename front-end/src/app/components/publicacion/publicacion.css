@@ -1,0 +1,9 @@
+.btn-like {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+.btn-like.activo {
+  color: red;
+}

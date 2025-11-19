@@ -1,10 +1,10 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core'; // Importar 'computed'
+import { Component, computed, inject, OnInit, signal } from '@angular/core'; 
 import { PublicacionesService } from '../../services/publicaciones.service';
 import { CommonModule } from '@angular/common';
 import { Publicacion } from '../../components/publicacion/publicacion'; 
 import { Auth } from '../../services/auth';
 import { Supabase } from '../../services/supabase'; // Importar Supabase
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms'; // Importar ReactiveForms
+import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms'; 
 import Swal from 'sweetalert2';
 
 
@@ -25,7 +25,10 @@ export class Publicaciones implements OnInit {
   limit = signal(10);
   offset = signal(0);
   
-  currentUserId = computed(() => this.authService.currentUser()?.id);
+  currentUserId = computed(() => {
+    const user = this.authService.currentUser();
+    return user?.id || user?._id;
+  });
 
   selectedFile = signal<File | null>(null);
   isSubmitting = signal(false);
@@ -33,7 +36,7 @@ export class Publicaciones implements OnInit {
   form = new FormGroup({
     titulo: new FormControl('', [Validators.required, Validators.minLength(5)]), 
     mensaje: new FormControl('', [Validators.required, Validators.minLength(10)]),
-  });
+  });  
 
   ngOnInit() {
     this.cargarPublicaciones();
@@ -79,11 +82,12 @@ export class Publicaciones implements OnInit {
     let urlImagen = null;
 
     try {
-      // 1. Si hay foto, subirla a Supabase
+      
       if (this.selectedFile()) {
         const file = this.selectedFile()!;
-        // Usamos un timestamp para evitar nombres duplicados
-        const filePath = `publicaciones/${Date.now()}_${file.name}`;
+        
+        const timestamp = Date.now();
+        const filePath = `publicaciones/${timestamp}_${file.name}`;
         
         const { error } = await this.supaService.uploadFile('fotos', filePath, file);
         if (error) throw error;
@@ -94,7 +98,7 @@ export class Publicaciones implements OnInit {
       // 2. Preparar datos
       const nuevaPubData = {
         titulo: this.form.value.titulo,
-        descripcion: this.form.value.mensaje, // <--- EL BACKEND ESPERA 'descripcion'
+        descripcion: this.form.value.mensaje, 
         urlImagen: urlImagen 
       };
 
@@ -113,7 +117,7 @@ export class Publicaciones implements OnInit {
           this.isSubmitting.set(false);
         },
         error: (err) => {
-          console.error(err); // Ahora verás el error detallado si falla algo más
+          console.error(err); 
           this.showErrorAlert('Error', 'No se pudo crear la publicación');
           this.isSubmitting.set(false);
         }
@@ -142,9 +146,27 @@ export class Publicaciones implements OnInit {
     });
   }
 
-  onDelete(publicacionId: string) {
+  async onDelete(publicacionId: string) {
+    
+    const publicacion = this.publicaciones().find(p => p._id === publicacionId);
+
+    if (publicacion && publicacion.urlImagen) {
+      try {
+
+        const urlParts = publicacion.urlImagen.split('/fotos/');
+        
+        if (urlParts.length > 1) {
+          const path = urlParts[1]; 
+          await this.supaService.removeFile('fotos', path);
+        }
+      } catch (error) {
+        console.error("Error eliminando imagen de Supabase:", error);
+      }
+    }
+
     this.pubService.delete(publicacionId).subscribe(() => {
-      this.showSuccessAlert("Eliminación Exitosa","Se ha eliminado la publicación exitosamente");
+      this.showSuccessAlert("Eliminación Exitosa", "Se ha eliminado la publicación exitosamente");
+      
       this.publicaciones.update(pubs => 
         pubs.filter(p => p._id !== publicacionId)
       );
