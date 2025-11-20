@@ -1,34 +1,47 @@
-<div class="card">
+<div class="card h-100 shadow-sm">
+  
+  <div class="encabezado-card">
+    
+    <h3 
+      [routerLink]="['/publicacion', publicacion._id]" 
+      class="card-title m-0 text-truncate" 
+      style="cursor: pointer; font-size: 1.2rem; max-width: 80%;"
+      title="{{ publicacion.titulo }}">
+      {{ publicacion.titulo }}
+    </h3>
+    
+    <div class="ms-2">
+      @if (usuarioDioLike()) {
+        <button (click)="onUnlike.emit(publicacion._id)" class="btn-like text-danger" title="Ya no me gusta">
+          ❤️ <span class="small fw-bold">{{ publicacion.meGusta?.length || 0 }}</span>
+        </button>
+      } @else {
+        <button (click)="onLike.emit(publicacion._id)" class="btn-like text-muted" title="Me gusta">
+          🤍 <span class="small fw-bold">{{ publicacion.meGusta?.length || 0 }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
   @if (publicacion.urlImagen) {
     <img 
       [src]="publicacion.urlImagen" 
       [routerLink]="['/publicacion', publicacion._id]" 
-      class="card-img-top" 
+      class="card-img-top img-chica" 
       style="cursor: pointer" 
       alt="Imagen publicación">
   }
 
-  <div class="card-body">
-    <h3 [routerLink]="['/publicacion', publicacion._id]" style="cursor: pointer">
-      {{ publicacion.titulo }}
-    </h3>
+  <div class="card-body pt-2 pb-3">
+    <p class="card-text text-muted small mb-2">
+      {{ publicacion.descripcion }}
+    </p>
     
-    <p>{{ publicacion.descripcion }}</p>
-    
-    <div class="acciones">
-      @if (usuarioDioLike()) {
-        <button (click)="onUnlike.emit(publicacion._id)" class="btn-like activo">
-          ❤️ {{ publicacion.meGusta?.length || 0 }}
-        </button>
-      } @else {
-        <button (click)="onLike.emit(publicacion._id)" class="btn-like">
-          🤍{{ publicacion.meGusta?.length || 0 }}
-        </button>
-      }
-
-      @if (currentUserId === publicacion.autor?._id) {
-        <button (click)="onDelete.emit(publicacion._id)" style="color: red;">Eliminar</button>
-      }
-    </div>
+    @if (currentUserId === publicacion.autor?._id) {
+      <button (click)="onDelete.emit(publicacion._id)" class="btn btn-sm btn-outline-danger mt-2">
+        Eliminar
+      </button>
+    }
   </div>
+
 </div>

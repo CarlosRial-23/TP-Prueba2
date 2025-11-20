@@ -1,9 +1,50 @@
-.btn-like {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
+/* --- CENTRADO DE DESCRIPCIÓN --- */
+.card-body {
+  text-align: center; /* Centra el texto de la descripción */
 }
-.btn-like.activo {
-  color: red;
+
+/* --- CENTRADO DE TÍTULO Y CORAZÓN --- */
+/* Clase nueva para asegurar la posición */
+.encabezado-card {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* --- IMAGEN (120px) --- */
+.img-chica {
+  width: 300px;        /* Ajustado a 120px como pediste */
+  height: 300px;
+  object-fit: cover;
+  object-position: center;
+  margin: 10px auto 5px auto; /* margin auto centra el bloque de la imagen */
+  border-radius: 8px;
+  display: block;
+}
+
+/* --- BOTÓN LIKE --- */
+.btn-like {
+  border: none;
+  background: transparent;
+  padding: 15;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: transform 0.1s;
+}
+
+.btn-like:active {
+  transform: scale(1.2);
+}
+
+/* Ajuste para quitar borde azul al clickear */
+button:focus {
+  box-shadow: none;
+}
+
+.card {
+  transition: transform 0.2s;
 }

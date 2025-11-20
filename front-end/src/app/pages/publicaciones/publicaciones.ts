@@ -22,7 +22,7 @@ export class Publicaciones implements OnInit {
   publicaciones = signal<any[]>([]);
   totalPublicaciones = signal(0);
   orden = signal<'fecha' | 'likes'>('fecha');
-  limit = signal(10);
+  limit = signal(5);
   offset = signal(0);
   
   currentUserId = computed(() => {

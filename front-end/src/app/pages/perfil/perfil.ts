@@ -9,6 +9,7 @@ import { Publicacion } from '../../components/publicacion/publicacion';
   standalone: true, 
   imports: [CommonModule, Publicacion], 
   templateUrl: './perfil.html',
+  styleUrl: './perfil.css',
 })
 export class Perfil implements OnInit {
   private authService = inject(Auth);

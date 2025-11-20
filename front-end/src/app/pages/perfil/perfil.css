@@ -1,0 +1,18 @@
+.foto-perfil-grande {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;       
+  object-fit: cover;        
+  object-position: center;
+  border: 5px solid #4888c9; 
+  margin: 0 auto 20px auto;  
+  display: block;            
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+.publicaciones-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: start;
+}
