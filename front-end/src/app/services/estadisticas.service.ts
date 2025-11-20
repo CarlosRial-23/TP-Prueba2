@@ -18,6 +18,10 @@ export class EstadisticasService {
     return this.http.get<any[]>(`${this.apiUrl}/publicaciones-por-usuario`, { params: this.getParams(desde, hasta) });
   }
 
+  getComentariosPorUsuario(desde: string, hasta: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/comentarios-por-usuario`, { params: this.getParams(desde, hasta) });
+  }
+
   getComentariosTotales(desde: string, hasta: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/comentarios-totales`, { params: this.getParams(desde, hasta) });
   }

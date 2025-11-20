@@ -43,6 +43,37 @@ export class EstadisticasService {
     ]);
   }
 
+  async getComentariosPorUsuario(desde: Date, hasta: Date) {
+    return this.comentarioModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: desde, $lte: hasta }
+        },
+      },
+      {
+        $group: {
+          _id: '$autor', 
+          cantidad: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: { 
+          from: 'usuarios',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'usuarioInfo',
+        },
+      },
+      { $unwind: '$usuarioInfo' },
+      {
+        $project: {
+          nombreUsuario: '$usuarioInfo.nombreUsuario',
+          cantidad: 1,
+        },
+      },
+    ]);
+  }
+
   async getComentariosTotales(desde: Date, hasta: Date) {
     const cantidad = await this.comentarioModel.countDocuments({
         createdAt: { $gte: desde, $lte: hasta }

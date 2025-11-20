@@ -13,6 +13,11 @@ export class EstadisticasController {
     return this.estadisticasService.getPublicacionesPorUsuario(new Date(desde), new Date(hasta));
   }
 
+  @Get('comentarios-por-usuario')
+  async getComentariosPorUsuario(@Query('desde') desde: string, @Query('hasta') hasta: string) {
+    return this.estadisticasService.getComentariosPorUsuario(new Date(desde), new Date(hasta));
+  }
+
   @Get('comentarios-totales')
   async getComentariosTotales(@Query('desde') desde: string, @Query('hasta') hasta: string) {
     return this.estadisticasService.getComentariosTotales(new Date(desde), new Date(hasta));

@@ -16,6 +16,8 @@ Chart.register(...registerables);
     .filtros { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
     .graficos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .card-grafico { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+    .kpi { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .kpi p { font-size: 3rem; font-weight: bold; color: #28a745; }
   `]
 })
 export class Estadisticas implements OnInit {
@@ -26,13 +28,46 @@ export class Estadisticas implements OnInit {
 
   totalComentarios = signal(0);
 
-  barChartOptions: ChartConfiguration['options'] = { responsive: true };
+  barChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+     y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 1,  // <--- Esto fuerza pasos de 1 en 1
+        precision: 0  // <--- Esto evita decimales
+      }
+    }}
+  };
   barChartType: ChartType = 'bar';
   barChartData: ChartData<'bar'> = { labels: [], datasets: [{ data: [], label: 'Publicaciones' }] };
 
-  pieChartOptions: ChartConfiguration['options'] = { responsive: true };
+  pieChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    }
+  };
+
   pieChartType: ChartType = 'pie';
   pieChartData: ChartData<'pie'> = { labels: [], datasets: [{ data: [] }] };
+
+  lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,  // <--- Idem: pasos de 1
+          precision: 0  // <--- Idem: sin decimales
+        }
+      }
+    }
+  };
+  lineChartType: ChartType = 'line';
+  lineChartData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Comentarios' }] };
 
   ngOnInit() {
     this.generarReporte();
@@ -42,6 +77,7 @@ export class Estadisticas implements OnInit {
     const desde = this.fechaDesde();
     const hasta = this.fechaHasta();
 
+    // Gráfico Barras
     this.statsService.getPublicacionesPorUsuario(desde, hasta).subscribe(data => {
       this.barChartData = {
         labels: data.map(d => d.nombreUsuario),
@@ -49,14 +85,30 @@ export class Estadisticas implements OnInit {
       };
     });
 
+    // Gráfico Torta (Comentarios realizados por usuario)
+    this.statsService.getComentariosPorUsuario(desde, hasta).subscribe(data => {
+      this.pieChartData = {
+        labels: data.map(d => d.nombreUsuario),
+        datasets: [{ data: data.map(d => d.cantidad) }]
+      };
+    });
+
+    // KPI Número total
     this.statsService.getComentariosTotales(desde, hasta).subscribe(data => {
       this.totalComentarios.set(data.cantidad);
     });
 
+    // Gráfico Líneas (Comentarios por publicación)
     this.statsService.getComentariosPorPublicacion(desde, hasta).subscribe(data => {
-      this.pieChartData = {
+      this.lineChartData = {
         labels: data.map(d => d.tituloPublicacion),
-        datasets: [{ data: data.map(d => d.cantidad) }]
+        datasets: [{ 
+          data: data.map(d => d.cantidad), 
+          label: 'Comentarios por Publicación', 
+          borderColor: 'red', 
+          backgroundColor: 'rgba(255,0,0,0.3)',
+          tension: 0.1 
+        }]
       };
     });
   }
