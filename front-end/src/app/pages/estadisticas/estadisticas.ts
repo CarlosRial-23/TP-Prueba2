@@ -66,6 +66,7 @@ export class Estadisticas implements OnInit {
       }
     }
   };
+
   lineChartType: ChartType = 'line';
   lineChartData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Comentarios' }] };
 
@@ -86,10 +87,16 @@ export class Estadisticas implements OnInit {
     });
 
     // Gráfico Torta (Comentarios realizados por usuario)
+    
     this.statsService.getComentariosPorUsuario(desde, hasta).subscribe(data => {
       this.pieChartData = {
-        labels: data.map(d => d.nombreUsuario),
-        datasets: [{ data: data.map(d => d.cantidad) }]
+        labels: data.map(d => d.nombreUsuario), // Nombre de quien comenta
+        datasets: [{ 
+          data: data.map(d => d.cantidad), // Cuántos comentarios hizo
+          backgroundColor: [ // Colores opcionales para la torta
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+          ]
+        }]
       };
     });
 

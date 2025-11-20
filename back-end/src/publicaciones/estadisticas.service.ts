@@ -11,6 +11,7 @@ export class EstadisticasService {
     @InjectModel(Comentario.name) private comentarioModel: Model<Comentario>,
   ) {}
 
+  // Gráfico de Barras: Publicaciones por usuario
   async getPublicacionesPorUsuario(desde: Date, hasta: Date) {
     return this.publicacionModel.aggregate([
       {
@@ -22,7 +23,7 @@ export class EstadisticasService {
       {
         $group: {
           _id: '$autor', 
-          cantidad: { $sum: 1 },
+          cantidad: { $sum: 1 }, // Esto cuenta +1 por cada publicación encontrada
         },
       },
       {
@@ -43,6 +44,8 @@ export class EstadisticasService {
     ]);
   }
 
+  // Gráfico de Torta: Comentarios realizados POR USUARIO
+  // --- AGREGAR ESTE MÉTODO ---
   async getComentariosPorUsuario(desde: Date, hasta: Date) {
     return this.comentarioModel.aggregate([
       {
@@ -51,12 +54,14 @@ export class EstadisticasService {
         },
       },
       {
+        // Agrupamos por el autor del comentario
         $group: {
           _id: '$autor', 
-          cantidad: { $sum: 1 },
+          cantidad: { $sum: 1 }, // Contamos cada comentario
         },
       },
       {
+        // Buscamos el nombre del usuario para mostrarlo en la torta
         $lookup: { 
           from: 'usuarios',
           localField: '_id',
@@ -81,6 +86,7 @@ export class EstadisticasService {
     return { cantidad };
   }
   
+  // Gráfico de Líneas: Comentarios recibidos POR PUBLICACIÓN
   async getComentariosPorPublicacion(desde: Date, hasta: Date) {
       return this.comentarioModel.aggregate([
       {
