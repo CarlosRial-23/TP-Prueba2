@@ -14,5 +14,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: start;
+  justify-content: center; /* Centrado para mejor vista */
+}
+
+.publicacion-wrapper {
+    background-color: #fff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
 }
