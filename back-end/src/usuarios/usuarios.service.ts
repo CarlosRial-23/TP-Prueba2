@@ -64,8 +64,19 @@ export class UsuariosService {
   }
 
   async remove(id: string) {
-    const eliminado = await this.UsuarioModel.deleteOne({_id : id})
-    return eliminado;
+    const deshabilitado = await this.UsuarioModel.updateOne(
+      { _id: id },
+      { activo: false }
+    );
+    return deshabilitado;
+  }
+
+  async restore(id: string) {
+    const habilitado = await this.UsuarioModel.updateOne(
+      { _id: id },
+      { activo: true }
+    );
+    return habilitado;
   }
 
   

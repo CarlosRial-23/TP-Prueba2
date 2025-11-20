@@ -3,17 +3,17 @@
         @if (!authService.currentUser()) {
             <button routerLink="login">Login</button>
             <button routerLink="registro">Registro</button>
-        } 
-        
-        @else {
+        } @else {
             <button routerLink="perfil">Mi Perfil</button>
             <button routerLink="publicaciones">Publicaciones</button>
+
+            @if (authService.currentUser()?.perfil === 'administrador') {
+                <button routerLink="admin/usuarios" style="background-color: #444;">Usuarios</button>
+                <button routerLink="admin/estadisticas" style="background-color: #444;">Estadísticas</button>
+            }
+            
             <button (click)="authService.logout()">Cerrar Sesión</button>
         }
     </nav>
 </div>
-
-
-
-
 <router-outlet />

@@ -1,0 +1,52 @@
+<div class="container">
+  <h1>Gestión de Usuarios</h1>
+
+  <input 
+    type="text" 
+    placeholder="Buscar por usuario o correo..." 
+    [ngModel]="filtro()"
+    (ngModelChange)="filtro.set($event)"
+    class="search-bar"
+  >
+
+  <table>
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Usuario</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of usuariosFiltrados; track user._id) {
+        <tr>
+          <td>
+            <img [src]="user.urlFoto || 'assets/default-user.png'" width="40" style="border-radius:50%">
+          </td>
+          <td>{{ user.nombre }} {{ user.apellido }} <br> <small>({{user.nombreUsuario}})</small></td>
+          <td>{{ user.correo }}</td>
+          <td>{{ user.perfil }}</td>
+          <td [class.activo]="user.activo" [class.inactivo]="!user.activo">
+            {{ user.activo ? 'Activo' : 'Inactivo' }}
+          </td>
+          <td class="acciones">
+            @if (user.perfil !== 'administrador') {
+              <button (click)="toggleEstado(user)">
+                {{ user.activo ? 'Desactivar' : 'Activar' }}
+              </button>
+            } @else {
+              <span>Admin</span>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6">No se encontraron usuarios.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

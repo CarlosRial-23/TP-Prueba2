@@ -1,1 +1,40 @@
-<p>estadisticas works!</p>
+<div class="container">
+  <h1>Estadísticas</h1>
+
+  <div class="filtros">
+    <label>Desde:</label>
+    <input type="date" [ngModel]="fechaDesde()" (ngModelChange)="fechaDesde.set($event)">
+    
+    <label>Hasta:</label>
+    <input type="date" [ngModel]="fechaHasta()" (ngModelChange)="fechaHasta.set($event)">
+
+    <button (click)="generarReporte()">Generar Gráficos</button>
+  </div>
+
+  <div class="graficos-grid">
+    
+    <div class="card-grafico">
+      <h3>Publicaciones por Usuario</h3>
+      <canvas baseChart
+        [data]="barChartData"
+        [options]="barChartOptions"
+        [type]="barChartType">
+      </canvas>
+    </div>
+
+    <div class="card-grafico">
+      <h3>Comentarios por Publicación</h3>
+      <canvas baseChart
+        [data]="pieChartData"
+        [options]="pieChartOptions"
+        [type]="pieChartType">
+      </canvas>
+    </div>
+
+    <div class="card-grafico" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <h3>Total Comentarios en el periodo</h3>
+      <p style="font-size: 3rem; font-weight: bold; color: #28a745;">{{ totalComentarios() }}</p>
+    </div>
+
+  </div>
+</div>

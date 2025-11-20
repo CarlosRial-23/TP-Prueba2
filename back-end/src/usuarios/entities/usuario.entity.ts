@@ -23,6 +23,8 @@ export class Usuario {
     perfil:string;
     @Prop({default:null})
     urlFoto:string;
+    @Prop({ default: true })
+    activo: boolean;
 
 }
 

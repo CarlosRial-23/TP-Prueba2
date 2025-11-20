@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard-guard'; // Importar guard
 
 export const routes: Routes = [
   {
@@ -20,10 +21,31 @@ export const routes: Routes = [
   },
   {
     path: 'publicaciones',
-    loadComponent: () => import('./pages/publicaciones/publicaciones').then((c) => c.Publicaciones),
+    loadComponent: () =>
+      import('./pages/publicaciones/publicaciones').then((c) => c.Publicaciones),
   },
   {
     path: 'publicacion/:id',
-    loadComponent: () => import('./pages/detalle-publicacion/detalle-publicacion').then(c => c.DetallePublicacion),
+    loadComponent: () =>
+      import('./pages/detalle-publicacion/detalle-publicacion').then(
+        (c) => c.DetallePublicacion
+      ),
   },
-  ];
+
+  {
+    path: 'admin/usuarios',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin-usuarios/admin-usuarios').then(
+        (c) => c.AdminUsuarios
+      ),
+  },
+  {
+    path: 'admin/estadisticas',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/estadisticas/estadisticas').then(
+        (c) => c.Estadisticas
+      ),
+  },
+];
