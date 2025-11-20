@@ -77,6 +77,9 @@ export class EstadisticasService {
         },
       },
     ]);
+
+    
+
   }
 
   async getComentariosTotales(desde: Date, hasta: Date) {
@@ -96,7 +99,7 @@ export class EstadisticasService {
       },
       {
         $group: {
-          _id: '$publicacionId', 
+          _id: '$publicacion', 
           cantidad: { $sum: 1 },
         },
       },
