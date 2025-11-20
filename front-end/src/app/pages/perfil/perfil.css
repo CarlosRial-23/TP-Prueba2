@@ -14,12 +14,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center; /* Centrado para mejor vista */
+  justify-content: center; 
 }
 
+/* Contenedor de cada tarjeta de publicación y sus comentarios */
 .publicacion-wrapper {
     background-color: #fff;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+    width: 350px; /* Ancho fijo para mantener consistencia en el grid */
+    transition: transform 0.2s;
+}
+
+.publicacion-wrapper:hover {
+  transform: translateY(-2px);
+}
+
+/* Botones pequeños para la edición */
+.btn-xs {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+    border-radius: 0.2rem;
 }
