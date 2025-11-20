@@ -1,52 +1,129 @@
-<div class="container">
-  <h1>Gestión de Usuarios</h1>
+<div class="admin-container">
+  <div class="header">
+    <h1>Gestión de Usuarios</h1>
+    <button (click)="mostrarFormulario.set(!mostrarFormulario())" class="btn-toggle">
+      {{ mostrarFormulario() ? 'Ver Listado' : 'Nuevo Usuario' }}
+    </button>
+  </div>
 
-  <input 
-    type="text" 
-    placeholder="Buscar por usuario o correo..." 
-    [ngModel]="filtro()"
-    (ngModelChange)="filtro.set($event)"
-    class="search-bar"
-  >
-
-  <table>
-    <thead>
-      <tr>
-        <th>Foto</th>
-        <th>Usuario</th>
-        <th>Correo</th>
-        <th>Rol</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (user of usuariosFiltrados; track user._id) {
-        <tr>
-          <td>
-            <img [src]="user.urlFoto || 'assets/default-user.png'" width="40" style="border-radius:50%">
-          </td>
-          <td>{{ user.nombre }} {{ user.apellido }} <br> <small>({{user.nombreUsuario}})</small></td>
-          <td>{{ user.correo }}</td>
-          <td>{{ user.perfil }}</td>
-          <td [class.activo]="user.activo" [class.inactivo]="!user.activo">
-            {{ user.activo ? 'Activo' : 'Inactivo' }}
-          </td>
-          <td class="acciones">
-            @if (user.perfil !== 'administrador') {
-              <button (click)="toggleEstado(user)">
-                {{ user.activo ? 'Desactivar' : 'Activar' }}
-              </button>
-            } @else {
-              <span>Admin</span>
+  @if (mostrarFormulario()) {
+    <div class="formulario-container">
+      <h2>Registrar Nuevo Usuario</h2>
+      
+      <form [formGroup]="form" (ngSubmit)="crearUsuario()">
+        
+        <div class="row">
+          <div class="col">
+            <input type="text" formControlName="nombre" placeholder="Nombre">
+            @if (f.nombre.invalid && f.nombre.touched) {
+              <small class="error-msg">Mínimo 3 caracteres.</small>
             }
-          </td>
-        </tr>
-      } @empty {
-        <tr>
-          <td colspan="6">No se encontraron usuarios.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+          </div>
+          <div class="col">
+            <input type="text" formControlName="apellido" placeholder="Apellido">
+            @if (f.apellido.invalid && f.apellido.touched) {
+              <small class="error-msg">Mínimo 3 caracteres.</small>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" formControlName="nombreUsuario" placeholder="Nombre de Usuario">
+            @if (f.nombreUsuario.invalid && f.nombreUsuario.touched) {
+              <small class="error-msg">Usuario requerido (3-20 letras).</small>
+            }
+        </div>
+
+        <div class="form-group">
+            <input type="email" formControlName="correo" placeholder="Correo Electrónico">
+            @if (f.correo.invalid && f.correo.touched) {
+              <small class="error-msg">Ingrese un correo válido.</small>
+            }
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <input type="password" formControlName="contrasenia" placeholder="Contraseña">
+                @if (f.contrasenia.hasError('pattern') && f.contrasenia.touched) {
+                    <small class="error-msg">Debe tener 1 mayúscula y 1 número.</small>
+                } @else if (f.contrasenia.invalid && f.contrasenia.touched) {
+                    <small class="error-msg">Mínimo 8 caracteres.</small>
+                }
+            </div>
+            <div class="col">
+                <input type="password" formControlName="repetirContrasenia" placeholder="Repetir Contraseña">
+            </div>
+        </div>
+        @if (form.hasError('noCoinciden') && f.repetirContrasenia.touched) {
+            <small class="error-msg center">Las contraseñas no coinciden.</small>
+        }
+
+        <label>Fecha Nacimiento:</label>
+        <input type="date" formControlName="fechaNacimiento">
+        @if (f.fechaNacimiento.invalid && f.fechaNacimiento.touched) {
+            <small class="error-msg">Fecha requerida.</small>
+        }
+
+        <textarea formControlName="descripcion" placeholder="Descripción (Bio)" rows="3"></textarea>
+        @if (f.descripcion.invalid && f.descripcion.touched) {
+            <small class="error-msg">Descripción requerida.</small>
+        }
+
+        <div class="roles-container">
+          <label class="roles-label">Asignar Perfil:</label>
+          <div class="radio-group">
+            <label class="radio-card" [class.selected]="f.perfil.value === 'usuario'">
+              <input type="radio" value="usuario" formControlName="perfil">
+              <span>Usuario</span>
+            </label>
+            
+            <label class="radio-card admin" [class.selected]="f.perfil.value === 'administrador'">
+              <input type="radio" value="administrador" formControlName="perfil">
+              <span>Administrador</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="file-input">
+          <label>Foto de Perfil:</label>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn-submit">Crear Usuario</button>
+      </form>
+    </div>
+  } 
+  
+  @else {
+    <div class="tabla-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Avatar</th>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of usuarios(); track user._id) {
+            <tr [class.deshabilitado]="!user.activo">
+              <td><img [src]="user.urlFoto || 'assets/no-photo.png'" class="avatar-mini"></td>
+              <td><strong>{{ user.nombreUsuario }}</strong></td>
+              <td>{{ user.correo }}</td>
+              <td><span class="badge">{{ user.perfil }}</span></td>
+              <td>{{ user.activo ? 'Activo' : 'Inactivo' }}</td>
+              <td>
+                <button class="btn-accion" [ngClass]="user.activo ? 'btn-baja' : 'btn-alta'"(click)="toggleEstado(user)">
+                  {{ user.activo ? 'Deshabilitar' : 'Habilitar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

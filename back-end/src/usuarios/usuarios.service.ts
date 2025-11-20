@@ -18,66 +18,50 @@ export class UsuariosService {
   async create(createUsuarioDto: CreateUsuarioDto) {
     const usuarioExistente = await this.findByEmail(createUsuarioDto.correo);
     if (usuarioExistente) {
-      // Si encontramos un usuario, lanzamos un error 409 (Conflict)
       throw new ConflictException('El correo electrónico ya está registrado');
     }
+    
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(createUsuarioDto.contrasenia, saltOrRounds);
+    
     const usuarioData = {
       ...createUsuarioDto, 
       contrasenia: hash,
       fechaNacimiento: new Date(createUsuarioDto.fechaNacimiento),
+      // Aseguramos que si no viene perfil, sea usuario, y activo true por defecto
+      perfil: createUsuarioDto['perfil'] || 'usuario', 
+      activo: true
     };
     
     const usuario = new this.UsuarioModel(usuarioData);
-    
 
     try {
-        const guardado = await usuario.save();
-        return guardado;
+        return await usuario.save();
     } catch (error) {
-        console.error('Error al guardar usuario en la DB:', error);
-        throw new InternalServerErrorException('Error desconocido al crear el usuario. Revise los logs del servidor para detalles del error de Mongoose.');
+        console.error('Error al guardar usuario:', error);
+        throw new InternalServerErrorException('Error al crear usuario');
     }
   }
 
   async findAll() {
-    const todos = await this.UsuarioModel.find();
-    
-    return todos;
+    return this.UsuarioModel.find().exec();
   }
   
   async findOne(id: string) {
-    
-    const resultado  = await this.UsuarioModel.findById(id);
-    return resultado;
+    return this.UsuarioModel.findById(id);
   }
 
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
-    console.log(updateUsuarioDto);
-    const modificado = await this.UsuarioModel.updateOne(
-      {_id : id},
-      updateUsuarioDto,
-    )
-    
-    return modificado;
+    return this.UsuarioModel.updateOne({_id : id}, updateUsuarioDto);
   }
 
+  // BAJA LÓGICA (Deshabilitar)
   async remove(id: string) {
-    const deshabilitado = await this.UsuarioModel.updateOne(
-      { _id: id },
-      { activo: false }
-    );
-    return deshabilitado;
+    return this.UsuarioModel.updateOne({_id : id}, { activo: false });
   }
 
+  // ALTA LÓGICA (Habilitar)
   async restore(id: string) {
-    const habilitado = await this.UsuarioModel.updateOne(
-      { _id: id },
-      { activo: true }
-    );
-    return habilitado;
+    return this.UsuarioModel.updateOne({_id : id}, { activo: true });
   }
-
-  
 }

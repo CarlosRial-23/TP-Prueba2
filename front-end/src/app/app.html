@@ -1,18 +1,18 @@
 <div class="contenedor">
     <nav class="navegacion">
         @if (!authService.currentUser()) {
-            <button routerLink="login">Login</button>
-            <button routerLink="registro">Registro</button>
+            <button class="btn-bt btn-primary-bt" routerLink="login">Login</button>
+            <button class="btn-bt btn-primary-bt" routerLink="registro">Registro</button>
         } @else {
-            <button routerLink="perfil">Mi Perfil</button>
-            <button routerLink="publicaciones">Publicaciones</button>
+            <button class="btn-bt btn-primary-bt" routerLink="perfil">Mi Perfil</button>
+            <button class="btn-bt btn-primary-bt" routerLink="publicaciones">Publicaciones</button>
 
             @if (authService.currentUser()?.perfil === 'administrador') {
-                <button routerLink="admin/usuarios" style="background-color: #444;">Usuarios</button>
-                <button routerLink="admin/estadisticas" style="background-color: #444;">Estadísticas</button>
+                <button class="btn-bt btn-dark-bt" routerLink="admin/usuarios">Usuarios</button>
+                <button class="btn-bt btn-dark-bt" routerLink="admin/estadisticas">Estadísticas</button>
             }
             
-            <button (click)="authService.logout()">Cerrar Sesión</button>
+            <button class="btn-bt btn-danger-bt ms-auto" (click)="authService.logout()">Cerrar Sesión</button>
         }
     </nav>
 </div>

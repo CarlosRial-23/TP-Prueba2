@@ -30,13 +30,15 @@ export class AuthService {
       throw new InternalServerErrorException('Usuario no registrado');
     }
 
-    const esValida = await bcrypt.compare(user.contrasenia, usuarioExistente.contrasenia);
+    if (usuarioExistente.activo === false) {
+      throw new UnauthorizedException('Su cuenta ha sido deshabilitada. Contacte al administrador.');
+    }
 
+    const esValida = await bcrypt.compare(user.contrasenia, usuarioExistente.contrasenia);
     if (!esValida) {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
-    // CORRECCIÓN: Pasar el objeto de usuario completo (con _id y perfil)
     return this.createToken(usuarioExistente);
   }
 
